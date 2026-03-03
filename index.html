@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Residential Roofing Master Inspection</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#0d1b2a;--navy-mid:#1b2d42;--steel:#2c4a6e;--blue:#1e6091;--sky:#2980b9;--sky-light:#ebf5fb;
+    --green:#1a5c38;--green-mid:#27ae60;--green-light:#eafaf1;
+    --amber:#b7530a;--amber-mid:#e67e22;--amber-light:#fef5e7;
+    --red:#922b21;--red-mid:#e74c3c;--red-light:#fdedec;
+    --silver:#bdc3c7;--line:#d5dde5;--bg:#f0f4f8;--white:#ffffff;--text:#1a2530;--text-soft:#5d7186;
+    --radius:6px;--shadow:0 2px 12px rgba(0,0,0,.12);
+    --font-head:'Barlow Condensed',sans-serif;--font-body:'Barlow',sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh}
+
+  .site-header{background:var(--navy);position:sticky;top:0;z-index:100;box-shadow:0 3px 20px rgba(0,0,0,.4)}
+  .site-header-inner{max-width:900px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px}
+  .header-brand{display:flex;align-items:center;gap:10px}
+  .header-icon{width:32px;height:32px;background:var(--sky);clip-path:polygon(50% 0%,100% 40%,80% 100%,20% 100%,0% 40%);flex-shrink:0}
+  .header-title{font-family:var(--font-head);font-size:1.15rem;font-weight:700;color:#fff;letter-spacing:.04em;line-height:1.15}
+  .header-title span{display:block;font-size:.7rem;font-weight:400;color:var(--silver);letter-spacing:.08em;text-transform:uppercase}
+  .header-actions{display:flex;gap:8px;flex-shrink:0}
+  .btn{font-family:var(--font-head);font-weight:700;font-size:.85rem;letter-spacing:.05em;text-transform:uppercase;border:none;cursor:pointer;border-radius:var(--radius);padding:8px 14px;transition:all .15s;white-space:nowrap}
+  .btn-ghost{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
+  .btn-ghost:hover{background:rgba(255,255,255,.2)}
+  .btn-primary{background:var(--sky);color:#fff}
+  .btn-primary:hover{background:#1a6fa8}
+  .btn-jn{background:#e67e22;color:#fff}
+  .btn-jn:hover{background:#ca6f1e}
+  .btn-jn:disabled{background:#aaa;cursor:not-allowed}
+
+  .progress-bar-wrap{background:var(--navy-mid);height:4px}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--green-mid));transition:width .4s ease;width:0%}
+
+  .main{max-width:900px;margin:0 auto;padding:24px 16px 80px}
+
+  /* CONFIG BANNER */
+  .config-banner{background:var(--amber-light);border:2px solid var(--amber-mid);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px}
+  .config-banner.hidden{display:none}
+  .config-icon{font-size:1.4rem;flex-shrink:0;margin-top:2px}
+  .config-banner h3{font-family:var(--font-head);font-size:1rem;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+  .config-banner p{font-size:.85rem;color:#7d5a00;line-height:1.5}
+  .config-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .config-fields input{font-family:var(--font-body);font-size:.88rem;padding:7px 10px;border:1.5px solid var(--amber-mid);border-radius:var(--radius);background:#fff;width:100%;color:var(--text)}
+  .config-fields input:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 3px rgba(230,126,34,.15)}
+  .config-fields .full{grid-column:1/-1}
+
+  /* JOB CARD */
+  .job-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);border-top:4px solid var(--blue);overflow:hidden;margin-bottom:28px}
+  .job-card-header{background:var(--navy);padding:14px 20px;display:flex;align-items:center;gap:10px}
+  .job-card-header h2{font-family:var(--font-head);font-size:1.1rem;font-weight:700;color:#fff;letter-spacing:.05em;text-transform:uppercase}
+  .badge{background:var(--sky);color:#fff;font-family:var(--font-head);font-size:.7rem;font-weight:700;letter-spacing:.06em;padding:2px 8px;border-radius:20px;text-transform:uppercase}
+  .job-fields{padding:16px 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+  .field-group label{display:block;font-size:.72rem;font-weight:600;color:var(--text-soft);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+  .field-group input,.field-group select,.field-group textarea{width:100%;font-family:var(--font-body);font-size:.92rem;color:var(--text);background:var(--bg);border:1.5px solid var(--line);border-radius:var(--radius);padding:8px 10px;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none}
+  .field-group input:focus,.field-group select:focus{outline:none;border-color:var(--sky);box-shadow:0 0 0 3px rgba(41,128,185,.15)}
+  .field-group.wide{grid-column:1/-1}
+
+  /* SECTION */
+  .section{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+  .section-header{display:flex;align-items:stretch;cursor:pointer;user-select:none;min-height:52px}
+  .section-accent{width:6px;flex-shrink:0}
+  .section-header-content{flex:1;padding:12px 16px;display:flex;align-items:center;gap:10px}
+  .section-number{font-family:var(--font-head);font-size:1.35rem;font-weight:800;opacity:.25;line-height:1;min-width:28px}
+  .section-info{flex:1}
+  .section-title{font-family:var(--font-head);font-size:1.05rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;line-height:1.2}
+  .section-subtitle{font-size:.75rem;color:var(--text-soft);margin-top:2px}
+  .section-meta{display:flex;align-items:center;gap:8px;flex-shrink:0}
+  .section-count{font-family:var(--font-head);font-size:.8rem;font-weight:600;color:var(--text-soft);white-space:nowrap}
+  .section-chevron{width:20px;height:20px;color:var(--silver);transition:transform .25s;flex-shrink:0}
+  .section.open .section-chevron{transform:rotate(180deg)}
+  .section-body{display:none;padding:0 16px 16px}
+  .section.open .section-body{display:block}
+
+  /* SUBSECTION */
+  .subsection{margin-top:16px}
+  .subsection-title{font-family:var(--font-head);font-size:.85rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:7px 12px;border-radius:var(--radius);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .subsection-title::before{content:'';display:inline-block;width:3px;height:14px;border-radius:2px;background:currentColor;opacity:.6;flex-shrink:0}
+
+  /* CHECK ITEM */
+  .check-item{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;gap:0 10px;padding:10px 8px;border-radius:var(--radius);border:1.5px solid transparent;margin-bottom:4px;transition:background .1s,border-color .1s}
+  .check-item:hover{background:var(--bg)}
+  .check-item.status-ok{background:var(--green-light);border-color:#a9dfbf}
+  .check-item.status-issue{background:var(--red-light);border-color:#f5b7b1}
+  .check-item.status-na{background:#f8f9fa;border-color:var(--line);opacity:.65}
+  .check-controls{grid-row:1/3;display:flex;flex-direction:column;gap:3px;padding-top:1px}
+  .status-btn{width:36px;height:24px;border-radius:4px;border:1.5px solid;font-family:var(--font-head);font-size:.65rem;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:all .12s;text-transform:uppercase;display:flex;align-items:center;justify-content:center}
+  .status-btn.ok{border-color:#a9dfbf;color:#27ae60;background:transparent}
+  .status-btn.issue{border-color:#f5b7b1;color:#e74c3c;background:transparent}
+  .status-btn.na{border-color:var(--line);color:#7f8c8d;background:transparent}
+  .status-btn.ok.active{background:#27ae60;color:#fff;border-color:#27ae60}
+  .status-btn.issue.active{background:#e74c3c;color:#fff;border-color:#e74c3c}
+  .status-btn.na.active{background:#7f8c8d;color:#fff;border-color:#7f8c8d}
+  .check-label{font-size:.92rem;line-height:1.4;padding-top:2px;grid-column:2}
+  .check-notes{grid-column:2;margin-top:6px;display:none}
+  .check-item.status-issue .check-notes{display:block}
+  .check-notes input{width:100%;font-family:var(--font-body);font-size:.83rem;color:var(--text);background:rgba(255,255,255,.8);border:1px solid #f1948a;border-radius:4px;padding:5px 8px}
+  .check-notes input:focus{outline:none;border-color:var(--sky)}
+  .check-notes input::placeholder{color:#bbb;font-style:italic}
+
+  /* NOTES BLOCK */
+  .notes-block{margin-top:14px}
+  .notes-block label{display:block;font-size:.72rem;font-weight:600;color:var(--text-soft);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+  .notes-block textarea{width:100%;font-family:var(--font-body);font-size:.88rem;color:var(--text);background:var(--bg);border:1.5px solid var(--line);border-radius:var(--radius);padding:9px 11px;resize:vertical;min-height:72px}
+  .notes-block textarea:focus{outline:none;border-color:var(--sky);box-shadow:0 0 0 3px rgba(41,128,185,.12)}
+
+  /* PHASE COLORS */
+  [data-phase="pre"] .section-accent{background:var(--green)}
+  [data-phase="pre"] .section-number{color:var(--green);opacity:.4}
+  [data-phase="pre"] .section-title{color:var(--green)}
+  [data-phase="pre"] .subsection-title{background:var(--green-light);color:var(--green)}
+  [data-phase="surface"] .section-accent{background:var(--blue)}
+  [data-phase="surface"] .section-number{color:var(--blue);opacity:.4}
+  [data-phase="surface"] .section-title{color:var(--blue)}
+  [data-phase="surface"] .subsection-title{background:var(--sky-light);color:var(--blue)}
+  [data-phase="flash"] .section-accent{background:var(--amber)}
+  [data-phase="flash"] .section-number{color:var(--amber);opacity:.4}
+  [data-phase="flash"] .section-title{color:var(--amber)}
+  [data-phase="flash"] .subsection-title{background:var(--amber-light);color:var(--amber)}
+  [data-phase="gutter"] .section-accent{background:#7d3c98}
+  [data-phase="gutter"] .section-number{color:#7d3c98;opacity:.4}
+  [data-phase="gutter"] .section-title{color:#7d3c98}
+  [data-phase="gutter"] .subsection-title{background:#f5eef8;color:#7d3c98}
+  [data-phase="attic"] .section-accent{background:#17a589}
+  [data-phase="attic"] .section-number{color:#17a589;opacity:.4}
+  [data-phase="attic"] .section-title{color:#17a589}
+  [data-phase="attic"] .subsection-title{background:#e8f8f5;color:#17a589}
+  [data-phase="summary"] .section-accent{background:var(--red-mid)}
+  [data-phase="summary"] .section-number{color:var(--red-mid);opacity:.4}
+  [data-phase="summary"] .section-title{color:var(--red-mid)}
+  [data-phase="summary"] .subsection-title{background:var(--red-light);color:var(--red)}
+
+  /* RATING & ACTION */
+  .rating-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:16px}
+  .rating-btn{padding:10px 8px;border-radius:var(--radius);border:2px solid var(--line);background:var(--bg);font-family:var(--font-head);font-size:.9rem;font-weight:700;letter-spacing:.04em;cursor:pointer;text-align:center;transition:all .15s;color:var(--text-soft)}
+  .rating-btn:hover{border-color:var(--sky);color:var(--sky)}
+  .rating-btn.selected{color:#fff}
+  .rating-btn[data-rating="excellent"].selected{background:#1a8a4c;border-color:#1a8a4c}
+  .rating-btn[data-rating="verygood"].selected{background:#27ae60;border-color:#27ae60}
+  .rating-btn[data-rating="good"].selected{background:#2e86c1;border-color:#2e86c1}
+  .rating-btn[data-rating="fair"].selected{background:#d68910;border-color:#d68910}
+  .rating-btn[data-rating="poor"].selected{background:#ca6f1e;border-color:#ca6f1e}
+  .rating-btn[data-rating="failed"].selected{background:#c0392b;border-color:#c0392b}
+  .action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+  .action-btn{padding:12px 8px;border-radius:var(--radius);border:2px solid var(--line);background:var(--bg);font-family:var(--font-head);font-size:.85rem;font-weight:700;letter-spacing:.04em;cursor:pointer;text-align:center;transition:all .15s;color:var(--text-soft);line-height:1.3}
+  .action-btn[data-action="repair"].selected{background:var(--green-mid);border-color:var(--green-mid);color:#fff}
+  .action-btn[data-action="replace"].selected{background:var(--red-mid);border-color:var(--red-mid);color:#fff}
+  .action-btn[data-action="monitor"].selected{background:var(--amber-mid);border-color:var(--amber-mid);color:#fff}
+
+  /* SUBMIT STATUS */
+  .submit-section{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:20px}
+  .submit-section h3{font-family:var(--font-head);font-size:1rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--navy);margin-bottom:12px}
+  .submit-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .submit-status{font-size:.88rem;color:var(--text-soft);font-style:italic}
+  .submit-status.success{color:var(--green-mid);font-style:normal;font-weight:600}
+  .submit-status.error{color:var(--red-mid);font-style:normal;font-weight:600}
+
+  /* SIGNATURE */
+  .sig-wrap{margin-top:12px}
+  .sig-wrap label{display:block;font-size:.72rem;font-weight:600;color:var(--text-soft);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+  canvas.sig-pad{width:100%;height:100px;border:1.5px solid var(--line);border-radius:var(--radius);background:var(--bg);cursor:crosshair;touch-action:none;display:block}
+  .sig-actions{display:flex;gap:8px;margin-top:6px}
+  .btn-sm{font-family:var(--font-head);font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:5px 12px;border:none;border-radius:4px;cursor:pointer;background:#f0f4f8;border:1px solid #ccc;color:#555}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;font-family:var(--font-head);font-size:.9rem;font-weight:600;padding:12px 24px;border-radius:30px;box-shadow:0 6px 30px rgba(0,0,0,.18);z-index:999;transition:transform .3s cubic-bezier(.175,.885,.32,1.275);pointer-events:none;white-space:nowrap}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  @media print{.site-header,.config-banner,.submit-section,.toast{display:none}.section{page-break-inside:avoid}.section-body{display:block!important}body{background:#fff}.check-notes{display:block!important}}
+  @media(max-width:480px){.action-grid{grid-template-columns:1fr}.header-title{font-size:1rem}.btn{padding:7px 10px;font-size:.78rem}.config-fields{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <div class="header-brand">
+      <div class="header-icon"></div>
+      <div class="header-title">Roofing Inspection<span>Residential Master Checklist</span></div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="saveDraft()">Save</button>
+      <button class="btn btn-ghost" onclick="window.print()">Print</button>
+      <button class="btn btn-jn" onclick="submitToJobNimbus()" id="jnBtn">Send to JobNimbus</button>
+    </div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
+</header>
+
+<div class="main" id="app">
+
+  <!-- CONFIG BANNER -->
+  <div class="config-banner" id="configBanner">
+    <div class="config-icon">⚙️</div>
+    <div style="flex:1">
+      <h3>JobNimbus Setup</h3>
+      <p>Enter your JobNimbus API key and the office email address to receive inspection reports. These are saved on this device only.</p>
+      <div class="config-fields">
+        <div class="full">
+          <input type="password" id="cfg_apikey" placeholder="JobNimbus API Key" autocomplete="off">
+        </div>
+        <input type="email" id="cfg_email" placeholder="Office email (for CC copy)">
+        <input type="text" id="cfg_company" placeholder="Company name (optional)">
+        <div class="full" style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="saveConfig()">Save Settings</button>
+          <button class="btn btn-ghost" style="background:#eee;color:#333;border:1px solid #ccc" onclick="dismissConfig()">Dismiss</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JOB INFO -->
+  <div class="job-card">
+    <div class="job-card-header">
+      <h2>Job Information</h2>
+      <span class="badge">Field Form</span>
+    </div>
+    <div class="job-fields">
+      <div class="field-group"><label>Inspector Name</label><input type="text" id="fi_inspector" placeholder="Full name"></div>
+      <div class="field-group"><label>Inspection Date</label><input type="date" id="fi_date"></div>
+      <div class="field-group"><label>Weather Conditions</label><input type="text" id="fi_weather" placeholder="Clear, cloudy, temp…"></div>
+      <div class="field-group wide"><label>Property Address</label><input type="text" id="fi_address" placeholder="Street, City, State, ZIP"></div>
+      <div class="field-group"><label>Homeowner Name</label><input type="text" id="fi_owner" placeholder=""></div>
+      <div class="field-group"><label>Roof Age (approx.)</label><input type="text" id="fi_age" placeholder="e.g. 18 years"></div>
+      <div class="field-group"><label>Roof Material</label>
+        <select id="fi_material">
+          <option value="">Select…</option>
+          <option>3-Tab Asphalt Shingles</option>
+          <option>Architectural / Dimensional Shingles</option>
+          <option>Impact-Rated Asphalt Shingles</option>
+          <option>Standing Seam Metal</option>
+          <option>Exposed Fastener Metal</option>
+          <option>Concrete Tile</option>
+          <option>Clay Tile</option>
+          <option>Natural Slate</option>
+          <option>Wood Shake / Shingle</option>
+          <option>TPO Flat Membrane</option>
+          <option>EPDM Flat Membrane</option>
+          <option>Built-Up Roofing (BUR)</option>
+          <option>Modified Bitumen</option>
+        </select>
+      </div>
+      <div class="field-group"><label>Roof Size (approx. SQ)</label><input type="text" id="fi_size" placeholder="e.g. 28 squares"></div>
+    </div>
+  </div>
+
+  <!-- SECTIONS 1–5 (same structure, rendered by JS) -->
+  <div class="section open" data-phase="pre" data-section="1">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-accent"></div>
+      <div class="section-header-content">
+        <div class="section-number">01</div>
+        <div class="section-info"><div class="section-title">Pre-Inspection</div><div class="section-subtitle">Complete before accessing the roof</div></div>
+        <div class="section-meta"><span class="section-count" id="count_1">0 / 0</span><svg class="section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="subsection"><div class="subsection-title">Safety & Conditions</div><div id="items_1_safety"></div></div>
+      <div class="subsection"><div class="subsection-title">Documentation & Tools</div><div id="items_1_docs"></div></div>
+      <div class="notes-block"><label>Pre-Inspection Notes</label><textarea id="notes_1" placeholder="General observations, access notes, hazards…"></textarea></div>
+    </div>
+  </div>
+
+  <div class="section" data-phase="surface" data-section="2">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-accent"></div>
+      <div class="section-header-content">
+        <div class="section-number">02</div>
+        <div class="section-info"><div class="section-title">Roofing Surface Condition</div><div class="section-subtitle">Inspect all roof planes systematically</div></div>
+        <div class="section-meta"><span class="section-count" id="count_2">0 / 0</span><svg class="section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="subsection"><div class="subsection-title">Asphalt Shingles</div><div id="items_2_asphalt"></div></div>
+      <div class="subsection"><div class="subsection-title">Metal Panels (if applicable)</div><div id="items_2_metal"></div></div>
+      <div class="subsection"><div class="subsection-title">Tile Roof (if applicable)</div><div id="items_2_tile"></div></div>
+      <div class="subsection"><div class="subsection-title">Flat / Low-Slope Membrane (if applicable)</div><div id="items_2_flat"></div></div>
+      <div class="notes-block"><label>Surface Condition Notes</label><textarea id="notes_2" placeholder="Describe any damage, wear patterns, areas of concern…"></textarea></div>
+    </div>
+  </div>
+
+  <div class="section" data-phase="flash" data-section="3">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-accent"></div>
+      <div class="section-header-content">
+        <div class="section-number">03</div>
+        <div class="section-info"><div class="section-title">Flashing Inspection</div><div class="section-subtitle">Most common source of leaks — inspect every point</div></div>
+        <div class="section-meta"><span class="section-count" id="count_3">0 / 0</span><svg class="section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="subsection"><div class="subsection-title">Chimney Flashing</div><div id="items_3_chimney"></div></div>
+      <div class="subsection"><div class="subsection-title">Skylight Flashing</div><div id="items_3_skylight"></div></div>
+      <div class="subsection"><div class="subsection-title">Pipe Boots & Penetrations</div><div id="items_3_pipes"></div></div>
+      <div class="subsection"><div class="subsection-title">Wall-to-Roof & Valleys</div><div id="items_3_walls"></div></div>
+      <div class="subsection"><div class="subsection-title">Drip Edge & Eave</div><div id="items_3_drip"></div></div>
+      <div class="notes-block"><label>Flashing Notes</label><textarea id="notes_3" placeholder="Note specific locations of failed or missing flashings…"></textarea></div>
+    </div>
+  </div>
+
+  <div class="section" data-phase="gutter" data-section="4">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-accent"></div>
+      <div class="section-header-content">
+        <div class="section-number">04</div>
+        <div class="section-info"><div class="section-title">Gutters &amp; Drainage</div><div class="section-subtitle">Gutters, downspouts, ice dams</div></div>
+        <div class="section-meta"><span class="section-count" id="count_4">0 / 0</span><svg class="section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="subsection"><div class="subsection-title">Gutters</div><div id="items_4_gutters"></div></div>
+      <div class="subsection"><div class="subsection-title">Downspouts & Discharge</div><div id="items_4_down"></div></div>
+      <div class="notes-block"><label>Gutter & Drainage Notes</label><textarea id="notes_4" placeholder="Note any drainage deficiencies, erosion, overflow evidence…"></textarea></div>
+    </div>
+  </div>
+
+  <div class="section" data-phase="attic" data-section="5">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-accent"></div>
+      <div class="section-header-content">
+        <div class="section-number">05</div>
+        <div class="section-info"><div class="section-title">Attic &amp; Interior</div><div class="section-subtitle">Deck, ventilation, structure, interior leak signs</div></div>
+        <div class="section-meta"><span class="section-count" id="count_5">0 / 0</span><svg class="section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="subsection"><div class="subsection-title">Roof Deck Condition</div><div id="items_5_deck"></div></div>
+      <div class="subsection"><div class="subsection-title">Ventilation</div><div id="items_5_vent"></div></div>
+      <div class="subsection"><div class="subsection-title">Structural & Interior</div><div id="items_5_struct"></div></div>
+      <div class="notes-block"><label>Attic & Interior Notes</label><textarea id="notes_5" placeholder="Moisture readings, mold locations, structural concerns…"></textarea></div>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="section open" data-phase="summary" data-section="6">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-accent"></div>
+      <div class="section-header-content">
+        <div class="section-number">06</div>
+        <div class="section-info"><div class="section-title">Summary &amp; Sign-Off</div><div class="section-subtitle">Overall rating, recommendations, signature</div></div>
+        <div class="section-meta"><svg class="section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="subsection"><div class="subsection-title">Overall Roof Condition Rating</div>
+        <div class="rating-grid">
+          <button class="rating-btn" data-rating="excellent" onclick="selectRating(this)">Excellent<br><small>9–10</small></button>
+          <button class="rating-btn" data-rating="verygood"  onclick="selectRating(this)">Very Good<br><small>7–8</small></button>
+          <button class="rating-btn" data-rating="good"      onclick="selectRating(this)">Good<br><small>5–6</small></button>
+          <button class="rating-btn" data-rating="fair"      onclick="selectRating(this)">Fair<br><small>3–4</small></button>
+          <button class="rating-btn" data-rating="poor"      onclick="selectRating(this)">Poor<br><small>1–2</small></button>
+          <button class="rating-btn" data-rating="failed"    onclick="selectRating(this)">Failed<br><small>Immediate</small></button>
+        </div>
+      </div>
+      <div class="subsection"><div class="subsection-title">Recommended Action</div>
+        <div class="action-grid">
+          <button class="action-btn" data-action="repair"  onclick="selectAction(this)">Repair Only</button>
+          <button class="action-btn" data-action="replace" onclick="selectAction(this)">Full Replacement</button>
+          <button class="action-btn" data-action="monitor" onclick="selectAction(this)">Monitor / Maintain</button>
+        </div>
+      </div>
+      <div class="subsection"><div class="subsection-title">Urgent Items (Within 30 Days)</div>
+        <div class="notes-block" style="margin-top:0"><textarea id="notes_urgent" placeholder="List any immediate safety or water intrusion issues…" style="min-height:80px"></textarea></div>
+      </div>
+      <div class="subsection"><div class="subsection-title">Near-Term Repairs (3–6 Months)</div>
+        <div class="notes-block" style="margin-top:0"><textarea id="notes_near" placeholder="List repairs that should be scheduled soon…" style="min-height:80px"></textarea></div>
+      </div>
+      <div class="subsection"><div class="subsection-title">Monitor / Annual Maintenance</div>
+        <div class="notes-block" style="margin-top:0"><textarea id="notes_monitor" placeholder="Items to watch at next inspection…" style="min-height:64px"></textarea></div>
+      </div>
+      <div class="subsection"><div class="subsection-title">Additional Comments</div>
+        <div class="notes-block" style="margin-top:0"><textarea id="notes_final" placeholder="General observations, photos taken, follow-up scheduled…" style="min-height:80px"></textarea></div>
+      </div>
+      <div class="subsection"><div class="subsection-title">Inspector Signature</div>
+        <div class="sig-wrap">
+          <label>Sign below</label>
+          <canvas class="sig-pad" id="sigCanvas"></canvas>
+          <div class="sig-actions"><button class="btn-sm" onclick="clearSig()">Clear</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-section">
+    <h3>Submit Inspection to JobNimbus</h3>
+    <p style="font-size:.85rem;color:var(--text-soft);margin-bottom:14px">This will create a Note on the matching contact/job in JobNimbus with the full inspection report. Make sure the property address matches a record in JobNimbus.</p>
+    <div class="submit-row">
+      <button class="btn btn-jn" onclick="submitToJobNimbus()" id="jnBtn2">Send to JobNimbus</button>
+      <button class="btn btn-primary" onclick="exportSummary()">Export / Print Report</button>
+      <button class="btn btn-ghost" style="background:#eee;color:#333;border:1px solid #ccc" onclick="saveDraft()">Save Draft</button>
+    </div>
+    <div style="margin-top:10px"><span class="submit-status" id="submitStatus">Not yet submitted.</span></div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CHECKLIST DATA ─────────────────────────────────────────────
+const CHECKLIST = {
+  '1_safety':["Weather conditions safe for inspection (dry, no wind, no ice)","All safety equipment present (harness, rope, non-slip footwear)","Ladder rated for weight of inspector plus equipment","Second person present or on-call for safety","Walk boards available for steep slopes (never inspect steep wet roofs without protection)"],
+  '1_docs':["Permit history and prior repair records reviewed","Roof age and material type noted in job info above","Ground-level visual survey completed (all four elevations)","Binoculars used to survey surface from ground before climbing","Photo documentation started — overview shots of all four sides taken","Moisture meter, screwdriver/awl, flashlight, and tape measure on hand"],
+  '2_asphalt':["No missing or displaced shingles anywhere on the roof","Granule coverage adequate — no bald, shiny, or bare patches","No significant granule accumulation in gutters","Shingles laying flat — no curling or cupping","No cracking, brittleness, or broken shingle pieces","No blistering or bubbling on shingle surface","No moss, algae (dark streaks), or lichen growth","No hail impact marks (circular bruises / dimples with granule loss)","Ridge cap intact, properly overlapped, and secure","Hip caps intact and secure along all hip lines"],
+  '2_metal':["All panels secure — no lifted, separated, or missing panels","Standing seam joints fully engaged — no open seams","Exposed fastener screws present, tight, neoprene washers intact","No surface rust, oxidation, or coating failure","Ridge cap fastened and sealed — no gaps or lifted sections","No dissimilar metals in direct contact (galvanic corrosion risk)"],
+  '2_tile':["No cracked, broken, or missing tiles on any plane","Ridge and hip caps intact — no loose or displaced tiles","Mortar-set tiles have no loose, cracked, or missing mortar","No tiles shifted or lifted by wind","Valley areas open and free of debris"],
+  '2_flat':["Membrane surface has no punctures, tears, cuts, or holes","All seams fully bonded — no lifting or open seams","No blistering, bubbling, or delamination of membrane","No ponding water (standing more than 48 hours after rain)","All roof drains clear and operational"],
+  '3_chimney':["Step flashing present along both sides — no missing pieces","Step flashing properly woven with shingles at each course","Counter flashing embedded in mortar — no loose or missing sections","Mortar joints holding counter flashing are solid — no gaps","Front apron flashing present and properly lapped over shingles","Cricket (saddle) present behind chimneys wider than 30 inches","All chimney flashing metal free of rust, holes, and open seams","No improvised repairs using roofing cement alone","Chimney crown (cap) intact — no cracking or missing sections"],
+  '3_skylight':["Head (top) flashing present and lapped over side flashings","Side step flashings integrated with shingles — properly installed","Sill (bottom) flashing present, sealed, and free of gaps","Skylight curb gasket / seal intact — no cracks or gaps","All flashing metal free of rust and corrosion","Interior ceiling near skylight free of water staining"],
+  '3_pipes':["All pipe boot rubber collars inspected — no cracks or tears","Each boot seated tightly against its pipe — no visible gaps","Boot base secured under shingles and sealed","No rust or deterioration on metal soil stack flashings","All electrical conduit and misc. penetrations properly flashed","Sealant at all penetrations adhered and not cracked"],
+  '3_walls':["Step flashing present along all walls intersecting the roof","Counter flashing overlaps step flashing by at least 4 inches","Kick-out (diverter) flashing present at all roof-to-wall intersections","No siding in direct contact with roof surface (clearance needed)","Open metal valleys free of rust, holes, and debris","Valley metal / woven valley properly installed — no open seams","No debris dams or blockages in any valley"],
+  '3_drip':["Drip edge present along all eaves","Drip edge present along all rakes (gable ends)","Drip edge properly overlapping gutters at eaves","No bent, rusted, or missing drip edge sections","Ice and water shield present at eaves (cold climates)"],
+  '4_gutters':["Gutters securely attached to fascia — no sagging sections","No holes, rust, or significant damage at gutter bottoms","End caps sealed — no leaking joints","Gutters clean — no debris or granule buildup blocking flow","Gutters sloped toward downspouts — no standing water after rain","Fascia boards behind gutters solid — no rot or moisture damage","No paint peeling on gutters or fascia (indicates overflow)"],
+  '4_down':["All downspout connections at gutters tight and sealed","No bent, separated, or missing downspout sections","Downspout straps securely fastened to the wall","Downspouts extend at least 6 feet from foundation at discharge","Splash blocks present and properly positioned","No soil erosion at downspout discharge points"],
+  '5_deck':["No daylight visible through roof deck from attic","Deck solid — no soft spots or rot when probed","No active moisture, dripping, or standing water in attic","No dark staining on decking indicating past water infiltration","No mold or mildew on decking, rafters, or framing","No delaminating plywood (layers separating from moisture)","No sagging deck sections visible from attic"],
+  '5_vent':["Ridge vent (or exhaust vent) present and unobstructed","Soffit intake vents present along eaves","Insulation not blocking soffit vent openings","No mixing of powered and passive exhaust vents","All bathroom exhaust fans venting to exterior (not into attic)","All kitchen range hood fans venting to exterior (not into attic)","No frost or condensation on underside of roof deck"],
+  '5_struct':["All visible rafters intact — no cracks, splits, or breaks","Ridge board straight and level — no visible sagging","No temporary or improvised shoring visible","No unapproved modifications to structural members","No interior water stains on ceilings or walls below attic","No peeling or bubbling paint on ceilings","No musty or mold odors in rooms below attic"],
+};
+
+// ── RENDER ─────────────────────────────────────────────────────
+function renderItems() {
+  Object.entries(CHECKLIST).forEach(([key, items]) => {
+    const c = document.getElementById('items_' + key);
+    if (!c) return;
+    items.forEach((text, idx) => {
+      const id = `item_${key}_${idx}`;
+      const d = document.createElement('div');
+      d.className = 'check-item'; d.id = id;
+      d.innerHTML = `<div class="check-controls">
+        <button class="status-btn ok"    onclick="setStatus('${id}','ok')"    >OK</button>
+        <button class="status-btn issue" onclick="setStatus('${id}','issue')" >!</button>
+        <button class="status-btn na"    onclick="setStatus('${id}','na')"    >N/A</button>
+      </div>
+      <div class="check-label">${text}</div>
+      <div class="check-notes"><input type="text" placeholder="Note issue details, location, photos taken…" id="note_${id}" onchange="saveDraftSilent()"></div>`;
+      c.appendChild(d);
+    });
+  });
+  updateAllCounts();
+}
+
+function toggleSection(h) { h.closest('.section').classList.toggle('open'); }
+
+function setStatus(id, st) {
+  const item = document.getElementById(id);
+  item.classList.remove('status-ok','status-issue','status-na');
+  item.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+  if (st) { item.classList.add('status-'+st); item.querySelector('.status-btn.'+st).classList.add('active'); item.dataset.status = st; }
+  else delete item.dataset.status;
+  updateSectionCount(item.closest('.section').dataset.section);
+  updateProgress(); saveDraftSilent();
+}
+
+function updateSectionCount(n) {
+  const s = document.querySelector(`[data-section="${n}"]`);
+  if (!s) return;
+  const total = s.querySelectorAll('.check-item').length;
+  const done  = s.querySelectorAll('.check-item[data-status]').length;
+  const c = document.getElementById(`count_${n}`);
+  if (c) c.textContent = `${done} / ${total}`;
+}
+function updateAllCounts() { for(let i=1;i<=5;i++) updateSectionCount(i); updateProgress(); }
+function updateProgress() {
+  const all = document.querySelectorAll('.check-item').length;
+  const done = document.querySelectorAll('.check-item[data-status]').length;
+  document.getElementById('progressBar').style.width = (all>0?Math.round(done/all*100):0)+'%';
+}
+
+function selectRating(b) { document.querySelectorAll('.rating-btn').forEach(x=>x.classList.remove('selected')); b.classList.add('selected'); saveDraftSilent(); }
+function selectAction(b) { document.querySelectorAll('.action-btn').forEach(x=>x.classList.remove('selected')); b.classList.add('selected'); saveDraftSilent(); }
+
+// ── SIGNATURE ─────────────────────────────────────────────────
+let sigDrawing=false;
+function initSig(){
+  const canvas=document.getElementById('sigCanvas'), ctx=canvas.getContext('2d');
+  function resize(){const dpr=window.devicePixelRatio||1,rect=canvas.getBoundingClientRect();canvas.width=rect.width*dpr;canvas.height=rect.height*dpr;ctx.scale(dpr,dpr);ctx.strokeStyle='#1a2530';ctx.lineWidth=2;ctx.lineCap='round';ctx.lineJoin='round';}
+  resize(); window.addEventListener('resize',resize);
+  function getPos(e){const rect=canvas.getBoundingClientRect(),src=e.touches?e.touches[0]:e;return{x:src.clientX-rect.left,y:src.clientY-rect.top};}
+  function start(e){e.preventDefault();sigDrawing=true;const p=getPos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);}
+  function draw(e){if(!sigDrawing)return;e.preventDefault();const p=getPos(e);ctx.lineTo(p.x,p.y);ctx.stroke();}
+  function end(){sigDrawing=false;}
+  canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',draw);canvas.addEventListener('mouseup',end);
+  canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',draw,{passive:false});canvas.addEventListener('touchend',end);
+}
+function clearSig(){const canvas=document.getElementById('sigCanvas');canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);}
+
+// ── CONFIG ────────────────────────────────────────────────────
+function saveConfig(){
+  const key=document.getElementById('cfg_apikey').value.trim();
+  const email=document.getElementById('cfg_email').value.trim();
+  const company=document.getElementById('cfg_company').value.trim();
+  if(!key){showToast('Please enter your API key');return;}
+  try{
+    localStorage.setItem('jn_apikey', key);
+    localStorage.setItem('jn_email', email);
+    localStorage.setItem('jn_company', company);
+    document.getElementById('configBanner').classList.add('hidden');
+    showToast('JobNimbus settings saved');
+  }catch(e){showToast('Could not save settings');}
+}
+function dismissConfig(){document.getElementById('configBanner').classList.add('hidden');}
+function loadConfig(){
+  try{
+    const key=localStorage.getItem('jn_apikey');
+    const email=localStorage.getItem('jn_email');
+    const company=localStorage.getItem('jn_company');
+    if(key){document.getElementById('cfg_apikey').value=key;}
+    if(email){document.getElementById('cfg_email').value=email;}
+    if(company){document.getElementById('cfg_company').value=company;}
+    if(key) document.getElementById('configBanner').classList.add('hidden');
+  }catch(e){}
+}
+
+// ── DATA GATHER ───────────────────────────────────────────────
+function gatherData(){
+  const data={job:{},items:{},notes:{},rating:null,action:null};
+  ['inspector','date','weather','address','owner','age','material','size'].forEach(k=>{data.job[k]=document.getElementById('fi_'+k)?.value||'';});
+  document.querySelectorAll('.check-item').forEach(item=>{data.items[item.id]={status:item.dataset.status||null,note:document.getElementById('note_'+item.id)?.value||''};});
+  ['1','2','3','4','5','urgent','near','monitor','final'].forEach(k=>{data.notes[k]=document.getElementById('notes_'+k)?.value||'';});
+  const r=document.querySelector('.rating-btn.selected'); data.rating=r?r.dataset.rating:null;
+  const a=document.querySelector('.action-btn.selected'); data.action=a?a.dataset.action:null;
+  return data;
+}
+
+// ── SAVE / LOAD DRAFT ─────────────────────────────────────────
+function saveDraft(){
+  try{localStorage.setItem('roofing_draft',JSON.stringify(gatherData()));showToast('Draft saved');}catch(e){showToast('Save failed');}
+}
+function saveDraftSilent(){
+  try{localStorage.setItem('roofing_draft',JSON.stringify(gatherData()));}catch(e){}
+}
+function applyData(d){
+  if(!d)return;
+  if(d.job)Object.entries(d.job).forEach(([k,v])=>{const el=document.getElementById('fi_'+k);if(el)el.value=v;});
+  if(d.items)Object.entries(d.items).forEach(([id,val])=>{if(val.status)setStatus(id,val.status);const ne=document.getElementById('note_'+id);if(ne&&val.note)ne.value=val.note;});
+  if(d.notes)Object.entries(d.notes).forEach(([k,v])=>{const el=document.getElementById('notes_'+k);if(el)el.value=v;});
+  if(d.rating){const b=document.querySelector(`.rating-btn[data-rating="${d.rating}"]`);if(b)b.classList.add('selected');}
+  if(d.action){const b=document.querySelector(`.action-btn[data-action="${d.action}"]`);if(b)b.classList.add('selected');}
+  updateAllCounts();
+}
+function loadDraft(){
+  try{const raw=localStorage.getItem('roofing_draft');if(raw){applyData(JSON.parse(raw));}}catch(e){}
+}
+
+// ── BUILD REPORT TEXT ─────────────────────────────────────────
+function buildReportText(d){
+  const rMap={excellent:'Excellent (9-10)',verygood:'Very Good (7-8)',good:'Good (5-6)',fair:'Fair (3-4)',poor:'Poor (1-2)',failed:'FAILED — Immediate Replacement Required'};
+  const aMap={repair:'Repair Only',replace:'Full Replacement',monitor:'Monitor / Maintain'};
+  const issues=Object.entries(d.items).filter(([,v])=>v.status==='issue').map(([id,v])=>{
+    const el=document.getElementById(id);
+    const label=el?.querySelector('.check-label')?.textContent||id;
+    return `  • ${label}${v.note?' — '+v.note:''}`;
+  });
+  const sNames={1:'Pre-Inspection',2:'Roofing Surface',3:'Flashings',4:'Gutters & Drainage',5:'Attic & Interior'};
+  let counts='';
+  for(let s=1;s<=5;s++){
+    const sec=document.querySelector(`[data-section="${s}"]`);
+    if(!sec)continue;
+    const total=sec.querySelectorAll('.check-item').length;
+    const done=sec.querySelectorAll('.check-item[data-status]').length;
+    const iss=sec.querySelectorAll('.check-item.status-issue').length;
+    counts+=`  ${sNames[s]}: ${done}/${total} reviewed, ${iss} issue(s)\n`;
+  }
+  let txt=`RESIDENTIAL ROOFING INSPECTION REPORT\n${'='.repeat(50)}\n\n`;
+  txt+=`Property:       ${d.job.address||'—'}\n`;
+  txt+=`Homeowner:      ${d.job.owner||'—'}\n`;
+  txt+=`Inspector:      ${d.job.inspector||'—'}\n`;
+  txt+=`Date:           ${d.job.date||'—'}\n`;
+  txt+=`Weather:        ${d.job.weather||'—'}\n`;
+  txt+=`Roof Material:  ${d.job.material||'—'}\n`;
+  txt+=`Roof Age:       ${d.job.age||'—'}\n`;
+  txt+=`Roof Size:      ${d.job.size||'—'}\n\n`;
+  txt+=`OVERALL RATING: ${rMap[d.rating]||'Not rated'}\n`;
+  txt+=`RECOMMENDATION: ${aMap[d.action]||'Not selected'}\n\n`;
+  txt+=`SECTION SUMMARY\n${'-'.repeat(40)}\n${counts}\n`;
+  if(issues.length>0){txt+=`ISSUES FOUND (${issues.length})\n${'-'.repeat(40)}\n${issues.join('\n')}\n\n`;}
+  else{txt+=`ISSUES FOUND\n${'-'.repeat(40)}\n  No issues flagged.\n\n`;}
+  if(d.notes.urgent) txt+=`URGENT (Within 30 Days)\n${'-'.repeat(40)}\n${d.notes.urgent}\n\n`;
+  if(d.notes.near)   txt+=`NEAR-TERM (3–6 Months)\n${'-'.repeat(40)}\n${d.notes.near}\n\n`;
+  if(d.notes.monitor)txt+=`MONITOR / MAINTENANCE\n${'-'.repeat(40)}\n${d.notes.monitor}\n\n`;
+  if(d.notes.final)  txt+=`ADDITIONAL COMMENTS\n${'-'.repeat(40)}\n${d.notes.final}\n\n`;
+  txt+=`${'='.repeat(50)}\nGenerated: ${new Date().toLocaleString()}\n`;
+  return txt;
+}
+
+// ── JOBNIMBUS SUBMIT ──────────────────────────────────────────
+async function submitToJobNimbus(){
+  const apiKey = localStorage.getItem('jn_apikey');
+  if(!apiKey){
+    document.getElementById('configBanner').classList.remove('hidden');
+    showToast('Please enter your JobNimbus API key first');
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  const d = gatherData();
+  if(!d.job.address){showToast('Please enter the property address first');return;}
+
+  const btn1=document.getElementById('jnBtn'), btn2=document.getElementById('jnBtn2');
+  const statusEl=document.getElementById('submitStatus');
+  [btn1,btn2].forEach(b=>{if(b){b.disabled=true;b.textContent='Sending…';}});
+  statusEl.className='submit-status'; statusEl.textContent='Connecting to JobNimbus…';
+
+  const reportText = buildReportText(d);
+  const noteBody = {
+    note: reportText,
+    note_type: 1,  // 1 = general note
+    date_created: Math.floor(Date.now()/1000),
+  };
+
+  // Step 1: Search for a contact/job by address
+  try{
+    statusEl.textContent='Searching for matching contact in JobNimbus…';
+    const searchResp = await fetch(
+      `https://app.jobnimbus.com/api1/contacts?search=${encodeURIComponent(d.job.address)}&fields=id,display_name,address`,
+      { headers:{ 'Authorization':'Token '+apiKey, 'Content-Type':'application/json' } }
+    );
+    const searchData = await searchResp.json();
+    const contacts = searchData.results || [];
+
+    let targetId = null, targetName = '';
+    if(contacts.length > 0){
+      targetId = contacts[0].jnid || contacts[0].id;
+      targetName = contacts[0].display_name || contacts[0].first_name || 'Contact';
+    }
+
+    // Step 2: Post note — attach to contact if found, or as standalone
+    statusEl.textContent=targetId?`Found "${targetName}" — creating note…`:'No matching contact found — creating standalone note…';
+
+    const notePayload = {
+      ...noteBody,
+      ...(targetId ? { related: [{ id: targetId, type: 'contact' }] } : {})
+    };
+
+    const noteResp = await fetch('https://app.jobnimbus.com/api1/activities', {
+      method:'POST',
+      headers:{ 'Authorization':'Token '+apiKey, 'Content-Type':'application/json' },
+      body: JSON.stringify(notePayload)
+    });
+
+    if(noteResp.ok){
+      const noteData = await noteResp.json();
+      statusEl.className='submit-status success';
+      statusEl.textContent = targetId
+        ? `✓ Inspection saved to JobNimbus under "${targetName}" — ${new Date().toLocaleTimeString()}`
+        : `✓ Note created in JobNimbus (no matching contact found for address) — ${new Date().toLocaleTimeString()}`;
+      showToast('Sent to JobNimbus!');
+      saveDraftSilent();
+    } else {
+      const errText = await noteResp.text();
+      statusEl.className='submit-status error';
+      statusEl.textContent=`Error ${noteResp.status}: ${errText.substring(0,120)}`;
+      showToast('JobNimbus error — check status below');
+    }
+  }catch(err){
+    statusEl.className='submit-status error';
+    statusEl.textContent='Network error: '+err.message+'. Check your connection and API key.';
+    showToast('Connection failed');
+  } finally {
+    [btn1,btn2].forEach(b=>{if(b){b.disabled=false;b.textContent='Send to JobNimbus';}});
+  }
+}
+
+// ── EXPORT PRINT ──────────────────────────────────────────────
+function exportSummary(){
+  const d=gatherData();
+  const rMap={excellent:'Excellent (9-10)',verygood:'Very Good (7-8)',good:'Good (5-6)',fair:'Fair (3-4)',poor:'Poor (1-2)',failed:'FAILED — Immediate Replacement'};
+  const aMap={repair:'Repair Only',replace:'Full Replacement',monitor:'Monitor / Maintain'};
+  const issues=Object.entries(d.items).filter(([,v])=>v.status==='issue').map(([id,v])=>{const l=document.getElementById(id)?.querySelector('.check-label')?.textContent||id;return`<li>${l}${v.note?' <em>— '+v.note+'</em>':''}</li>`;});
+  const rColors={excellent:'#1a8a4c',verygood:'#27ae60',good:'#2e86c1',fair:'#d68910',poor:'#ca6f1e',failed:'#c0392b'};
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Roofing Report — ${d.job.address||''}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Barlow',sans-serif;background:#fff;color:#1a2530;padding:28px;max-width:780px;margin:0 auto;font-size:13px}
+  h1{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:800;color:#0d1b2a;text-transform:uppercase}
+  h2{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#1e6091;border-bottom:2px solid #ebf5fb;padding-bottom:4px;margin:18px 0 8px}
+  .meta{display:grid;grid-template-columns:1fr 1fr;gap:5px 20px;margin:12px 0;font-size:.85rem}
+  .mr{display:flex;gap:6px}.ml{font-weight:600;min-width:110px;color:#5d7186}
+  .rb{display:inline-block;padding:5px 16px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;color:#fff;margin:4px 0}
+  ul{list-style:none;padding:0}.ul li{padding:5px 8px;border-left:3px solid #e74c3c;background:#fdedec;margin-bottom:3px;border-radius:2px;font-size:.87rem}
+  .nb{background:#f8f9fa;border:1px solid #e0e0e0;border-radius:4px;padding:9px;margin:3px 0;font-size:.87rem;white-space:pre-wrap;min-height:36px}
+  .ft{margin-top:28px;border-top:2px solid #0d1b2a;padding-top:12px;font-size:.75rem;color:#888}
+  @media print{body{padding:12px}}</style></head><body>
+  <h1>Roofing Inspection Report</h1>
+  <div class="meta">
+    <div class="mr"><span class="ml">Property:</span>${d.job.address||'—'}</div>
+    <div class="mr"><span class="ml">Homeowner:</span>${d.job.owner||'—'}</div>
+    <div class="mr"><span class="ml">Inspector:</span>${d.job.inspector||'—'}</div>
+    <div class="mr"><span class="ml">Date:</span>${d.job.date||'—'}</div>
+    <div class="mr"><span class="ml">Material:</span>${d.job.material||'—'}</div>
+    <div class="mr"><span class="ml">Roof Age:</span>${d.job.age||'—'}</div>
+    <div class="mr"><span class="ml">Weather:</span>${d.job.weather||'—'}</div>
+    <div class="mr"><span class="ml">Size:</span>${d.job.size||'—'}</div>
+  </div>
+  <h2>Overall Assessment</h2>
+  <div class="rb" style="background:${rColors[d.rating]||'#888'}">${rMap[d.rating]||'Not rated'}</div>
+  <p style="margin:6px 0 2px"><strong>Recommendation:</strong> ${aMap[d.action]||'Not selected'}</p>
+  <h2>Issues Found${issues.length>0?' ('+issues.length+')':''}</h2>
+  ${issues.length>0?'<ul class="ul">'+issues.join('')+'</ul>':'<p style="color:#27ae60;font-weight:600">No issues flagged.</p>'}
+  ${d.notes.urgent?'<h2>Urgent (Within 30 Days)</h2><div class="nb">'+d.notes.urgent+'</div>':''}
+  ${d.notes.near?'<h2>Near-Term (3–6 Months)</h2><div class="nb">'+d.notes.near+'</div>':''}
+  ${d.notes.monitor?'<h2>Monitor / Maintenance</h2><div class="nb">'+d.notes.monitor+'</div>':''}
+  ${d.notes.final?'<h2>Additional Comments</h2><div class="nb">'+d.notes.final+'</div>':''}
+  <div class="ft">Generated: ${new Date().toLocaleString()} &nbsp;|&nbsp; Residential Roofing Master Inspection</div>
+  </body></html>`);
+  win.document.close(); win.print();
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2400);}
+
+// ── AUTO-SAVE ─────────────────────────────────────────────────
+document.addEventListener('input',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))saveDraftSilent();});
+
+// ── INIT ─────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  renderItems(); initSig();
+  const de=document.getElementById('fi_date');
+  if(de&&!de.value) de.value=new Date().toISOString().split('T')[0];
+  loadConfig();
+  loadDraft();
+});
+</script>
+</body>
+</html>
